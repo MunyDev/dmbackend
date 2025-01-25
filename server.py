@@ -48,5 +48,14 @@ class A(BaseHTTPRequestHandler):
         self.wfile.write(dmr.SerializeToString())
         
         # self.wfile.close()
-hs = HTTPServer(("0.0.0.0", 3040), A)
-hs.serve_forever()
+print("Starting internal server!")
+hs = HTTPServer(("0.0.0.0", 3040), A,bind_and_activate=False)
+hs.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+hs.server_bind()
+hs.server_activate()
+try: 
+    hs.serve_forever()
+except BaseException as e:
+    print("Interrupted")
+    hs.server_close()
+
